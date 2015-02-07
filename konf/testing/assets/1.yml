@@ -1,0 +1,10 @@
+---
+  a: 13
+  b: 'foo'
+  c: 4.44
+  cool_list:
+    - 6
+    - 12
+  cool_dict:
+    khrum: 'bar'
+    dfght: 90

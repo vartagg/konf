@@ -1,10 +1,15 @@
-|Build Status|
-
 Konf
 ====
 
 Designed to simplify a process of variables usage in configuration files.
 Importing variables to Python must be easy!
+
+Installation:
+
+.. code:: bash
+
+    pip install konf
+
 
 Features:
 

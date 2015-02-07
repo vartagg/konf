@@ -1,7 +1,7 @@
 import os
 from setuptools import setup
 
-version = "0.9"
+version = "0.9.1"
 
 description = (
     'Konf is a Python package which designed to simplify a process of variables usage in configuration files. '
@@ -25,7 +25,6 @@ setup(name='konf',
       keywords="konf,json,yaml,config",
       license="BSD",
       version=version,
-      url='http://github.com/vartagg/konf',
       classifiers=[
           'Development Status :: 4 - Beta',
           'Intended Audience :: Information Technology',

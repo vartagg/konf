@@ -1,7 +1,7 @@
 import os
 from setuptools import setup
 
-version = "0.9.1"
+version = "1.0"
 
 description = (
     'Konf is a Python package which designed to simplify a process of variables usage in configuration files. '
@@ -26,8 +26,8 @@ setup(name='konf',
       license="BSD",
       version=version,
       classifiers=[
-          'Development Status :: 4 - Beta',
-          'Intended Audience :: Information Technology',
+          'Development Status :: 5 - Production/Stable',
+          'Intended Audience :: Developers',
           'License :: OSI Approved :: BSD License',
           'Programming Language :: Python :: 2.7',
           'Programming Language :: Python :: 3'

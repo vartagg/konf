@@ -13,6 +13,7 @@ except ImportError:
 
 MAPPING = {
     '.yml': yaml.safe_load,
+    '.yaml': yaml.safe_load,
     '.json': json.loads
 }
 

@@ -1,5 +1,5 @@
 import os
-from setuptools import setup
+from setuptools import setup, find_packages
 import pkg_resources
 
 version = "1.1.2"
@@ -52,7 +52,8 @@ setup(
         'Programming Language :: Python :: 2.7',
         'Programming Language :: Python :: 3'
     ],
-    packages=['konf'],
+    packages=find_packages(),
+    package_data = {'': ['testing/assets/*.json', 'testing/assets/*.yml']},
     install_requires=install_requires,
     tests_require=['nose'],
     test_suite='nose.collector',

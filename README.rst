@@ -45,11 +45,13 @@ Just look at the code.
     # Filling of variables from config file fruits.yml in k_ object
     k_ = Konf('fruits.yml')
 
-    # Getting variables from k_. 1st arg is a name of variable (specified in config), 2nd can be a type or validator
+    # Getting variables from k_. 1st arg is a name of variable (specified in config),
+    # 2nd can be a type or validator
     APPLE = k_('APPLE', basestring)
     ORANGE = k_('ORANGE', basestring)
 
-    # In the next example is using validator: list, that must contain only objects with basestring type (str or unicode)
+    # In the next example is using validator: list, that must contain only objects with
+    # basestring type (str or unicode)
     BASKET_OF_MANDARINS = k_('BASKET', [basestring])
 
     # And dict with two required keys with appropriate types
@@ -76,21 +78,23 @@ Do you need to use a value if any variable is not contained in a config file? Yo
 
     k_ = Konf('extra.yml')
 
-    # 3rd arg is a default. If variable STRICT is not contained in config file, USE_STRICT will be False
+    # 3rd arg is a default. If variable STRICT is not contained in config file,
+    # USE_STRICT will be False
     USE_STRICT = k_('STRICT', bool, False)
 
     # You can also use None as default value
     WINNER = k_('WINNER', int, None)
 
-    # Default values will never be validated, because you forcibly declaring it. So, the next example is legit.
+    # Default values will never be validated, because you forcibly declaring it.
+    # So, the next example is legit.
     SHIFT_TIME = k_('SHIFT', int, complex(42, 42))
 
 
-Checking unused variables
-=========================
+Checking not involved variables
+===============================
 
-Sometimes you want to be sure that all of the variables in a config file are involved, and you haven't forgotten anything.
-In this situation the `check_involved()` method can be helpful.
+Sometimes you want to be sure that all of the variables in a config file are involved and you haven't forgotten anything.
+In this situation the ``check_involved()`` method can be helpful.
 
 .. code:: python
 
@@ -106,7 +110,7 @@ In this situation the `check_involved()` method can be helpful.
     # RedundantConfigError will be raised after call of this method!
     k_.check_involved()
 
-Default values and `check_involved()` also working fine together.
+Default values and ``check_involved()`` also working fine together.
 
 .. code:: python
 
@@ -118,14 +122,15 @@ Default values and `check_involved()` also working fine together.
 
     Y = k_('Y', int, 0)
 
-    # If X and Y doesn't contained in the config file, RedundantConfigError will not be raised, just X == 0 and Y == 0
+    # If X and Y doesn't contained in the config file, RedundantConfigError will not be raised,
+    # just X == 0 and Y == 0
     k_.check_involved()
 
 
 List of supporting Exceptions
 =============================
 
-:ValidationError: Raises when data from config file doesn't match to the `type_or_validator` arg
+:ValidationError: Raises when data from config file doesn't match to the ``type_or_validator`` arg
 
 :IncompleteConfig: Raises after trying to get variable that not contained in a config file
 
@@ -135,6 +140,6 @@ List of supporting Exceptions
 
 :ReassignmentError: Raises if variable loaded not for the first time
 
-:FileExtensionError: Raises if extension of the config is not .yml or .json, and `parse_callback` arg is not specified
+:FileExtensionError: Raises if extension of the config is not .yml or .json, and ``parse_callback`` arg is not specified
 
-:RedundantConfigError: Raises after `check_involved()` call if any of variables in config file is not involved in the program
+:RedundantConfigError: Raises after ``check_involved()`` call if any of variables in config file is not involved in the program

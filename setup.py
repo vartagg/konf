@@ -1,7 +1,7 @@
 import os
 from setuptools import setup
 
-version = "1.1"
+version = "1.1.1"
 
 description = (
     'Konf is a Python package which designed to simplify the use of variables in configuration files. '

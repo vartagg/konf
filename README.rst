@@ -26,10 +26,12 @@ Features:
 -  Unit-tested
 -  Custom format of configuration files can be used
 
-For Python data structures validation is used excellent lib
-`kolypto/py-good <https://github.com/kolypto/py-good>`__
+For Python data structures validation can be used one of these excellent libs:
 
-For YAML parsing is used great lib of Kirill Simonov
+-  `alecthomas/voluptuous <https://github.com/alecthomas/voluptuous>`__
+-  `kolypto/py-good <https://github.com/kolypto/py-good>`__ (by default)
+
+For YAML parsing is used a great lib of Kirill Simonov
 `PyYAML <http://pyyaml.org/wiki/PyYAML>`__
 
 
@@ -64,7 +66,10 @@ Just look at the code.
     MARIA_GRADE = k2_('MARIA', int)
 
 You can find more details and advanced examples about natural validation on
-`documentation of the "good" validation library <https://pypi.python.org/pypi/good/>`__
+`voluptuous <https://pypi.python.org/pypi/voluptuous>`__
+or
+`good <https://pypi.python.org/pypi/good>`__
+pages.
 
 
 Default values

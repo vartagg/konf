@@ -1,10 +1,14 @@
 # -*- coding: utf-8 -*-
-from good import Schema, Invalid
 import yaml
 import json
 import os
 
 __author__ = 'vartagg'
+
+try:
+    from good import Schema, Invalid
+except ImportError:
+    from voluptuous import Schema, Invalid
 
 
 MAPPING = {

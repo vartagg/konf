@@ -79,3 +79,38 @@ class KonfigTestCase(TestCase):
         self.assertRaises(Konf.ReassignmentError,
                           lambda: k_('a', int)
                           )
+
+    def test_default(self):
+        k_ = Konf(self._get_asset('1.yml'))
+
+        x = k_('x', int, 777)
+        self.assertEqual(x, 777)
+
+        y = k_('y', dict, 888)
+        self.assertEqual(y, 888)
+
+        z = k_('z', float, None)
+        self.assertEqual(z, None)
+
+    def test_involved(self):
+        k_ = Konf(self._get_asset('2.yml'))
+        checker = k_.check_involved
+
+        right_foot = k_('right_foot', int)
+        self.assertEqual(right_foot, 1)
+        self.assertRaises(Konf.RedundantConfigError, checker)
+
+        left_foot = k_('left_foot', int)
+        checker()
+        self.assertEqual(left_foot, 0)
+
+    def test_involved_with_default(self):
+        k_ = Konf(self._get_asset('2.yml'))
+        checker = k_.check_involved
+        right_foot = k_('right_foot', int)
+        left_foot = k_('left_foot', int)
+        tail = k_('tail', int, 9)
+        checker()
+        self.assertEquals([left_foot, right_foot, tail], [0, 1, 9])
+
+        self.assertRaises(k_.ReassignmentError, lambda: k_('tail', int, 10))

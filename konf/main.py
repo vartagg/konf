@@ -7,10 +7,14 @@ import os
 __author__ = 'vartagg'
 
 
-_MAPPING = {
+MAPPING = {
     '.yml': yaml.safe_load,
     '.json': json.loads
 }
+
+
+class Unspecified(object):
+    pass
 
 
 class Konf(object):
@@ -32,12 +36,17 @@ class Konf(object):
     class ReassignmentError(Exception):
         pass
 
+    class RedundantConfigError(Exception):
+        pass
+
     def __init__(self, config_path, parse_callback=None, *parse_callback_args, **parse_callback_kwargs):
         """
+        File extension detection, reading content from file, parsing and encapsulation data inside Konf object.
+
         :param config_path: path to the config file
-        :param parse_callback: if defined, this function will be used  for parsing config
-        :param parse_callback_args: the *args passing to the parse_callback if it's defined
-        :param parse_callback_kwargs: the **kwargs passing to the parse_callback if it's defined
+        :param parse_callback: if specified, this function will be used  for parsing config
+        :param parse_callback_args: the *args passing to the parse_callback if it's specified
+        :param parse_callback_kwargs: the **kwargs passing to the parse_callback if it's specified
         :return: new Konf object
         """
         self._config = config_path
@@ -47,7 +56,7 @@ class Konf(object):
         else:
             extension = self._detect_extension(config_path)
             try:
-                self._load = _MAPPING[extension]
+                self._load = MAPPING[extension]
             except KeyError:
                 raise self.FileExtensionError('Can`t load data from this file because it`s extension is wrong. '
                                               '\nYou can provide parse_callback if you want to get data from files '
@@ -69,10 +78,13 @@ class Konf(object):
         self._data = data
         self._collected_data = []
 
-    def __call__(self, name, type_or_validator):
+    def __call__(self, name, type_or_validator, default=Unspecified):
         """
+        Getting a variable from config file is here.
+
         :param name: variable name in the config file
         :param type_or_validator: how validate this variable
+        :param default: if specified, after failed getting a variable from config, this default will be used
         :return: variable from config file
         """
         if self._is_collected(name):
@@ -80,13 +92,37 @@ class Konf(object):
 
         if not isinstance(type_or_validator, Schema):
             type_or_validator = Schema(type_or_validator)
-        value = self._load_from_file_entry(name)
+
+        default_is_specified = default is not Unspecified
+        default_is_used = False
+
         try:
-            type_or_validator(value)
-        except Invalid as e:
-            raise self.ValidationError(e)
+            value = self._load_from_file_entry(name)
+        except self.IncompleteConfig:
+            if default_is_specified:
+                value = default
+                default_is_used = True
+                self._data[name] = value
+            else:
+                raise
+
+        if not default_is_used:
+            # Validate only if it is not default value
+            try:
+                type_or_validator(value)
+            except Invalid as e:
+                raise self.ValidationError(e)
         self._collected_data.append(name)
+
         return value
+
+    def check_involved(self):
+        data_set = set(self.data)
+        collected_data_set = set(self.collected_data)
+        diff = data_set - collected_data_set
+        if diff:
+            raise self.RedundantConfigError('There are unused variables in the config file "{}":'
+                                            '\n{}'.format(self._config, ', '.join(map(lambda x: str(x), diff))))
 
     @property
     def path(self):
@@ -95,6 +131,10 @@ class Konf(object):
     @property
     def data(self):
         return self._data
+
+    @property
+    def collected_data(self):
+        return self._collected_data
 
     @staticmethod
     def _detect_extension(path):

@@ -1,10 +1,10 @@
 import os
 from setuptools import setup
 
-version = "1.0"
+version = "1.1"
 
 description = (
-    'Konf is a Python package which designed to simplify a process of variables usage in configuration files. '
+    'Konf is a Python package which designed to simplify the use of variables in configuration files. '
     'json and yaml supported out of the box. '
 )
 

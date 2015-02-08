@@ -132,7 +132,7 @@ List of supporting Exceptions
 
 :ValidationError: Raises when data from config file doesn't match to the ``type_or_validator`` arg
 
-:IncompleteConfig: Raises after trying to get variable that not contained in a config file
+:IncompleteConfigError: Raises after trying to get variable that not contained in a config file
 
 :ReadError: Raises when config file can't be read
 

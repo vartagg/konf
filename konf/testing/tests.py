@@ -63,7 +63,7 @@ class KonfigTestCase(TestCase):
 
     def test_incomplete_config(self):
         k_ = Konf(self._get_asset('1.yml'))
-        self.assertRaises(Konf.IncompleteConfig,
+        self.assertRaises(Konf.IncompleteConfigError,
                           lambda: k_('I_Want_This_Please', int)
                           )
 

@@ -21,7 +21,7 @@ class Konf(object):
     class FileExtensionError(Exception):
         pass
 
-    class IncompleteConfig(Exception):
+    class IncompleteConfigError(Exception):
         pass
 
     class ReadError(Exception):
@@ -98,7 +98,7 @@ class Konf(object):
 
         try:
             value = self._load_from_file_entry(name)
-        except self.IncompleteConfig:
+        except self.IncompleteConfigError:
             if default_is_specified:
                 value = default
                 default_is_used = True
@@ -148,6 +148,6 @@ class Konf(object):
         try:
             ret = self.data[name]
         except KeyError:
-            raise self.IncompleteConfig('Param {} not found in the configuration file "{}"'.
+            raise self.IncompleteConfigError('Param {} not found in the configuration file "{}"'.
                                         format(name, self.path))
         return ret

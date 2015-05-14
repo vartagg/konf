@@ -22,26 +22,30 @@ class Unspecified(object):
     pass
 
 
+class BaseKonfError(Exception):
+    pass
+
+
 class Konf(object):
-    class FileExtensionError(Exception):
+    class FileExtensionError(BaseKonfError):
         pass
 
-    class IncompleteConfigError(Exception):
+    class IncompleteConfigError(BaseKonfError):
         pass
 
-    class ReadError(Exception):
+    class ReadError(BaseKonfError):
         pass
 
-    class ParseError(Exception):
+    class ParseError(BaseKonfError):
         pass
 
-    class ValidationError(Exception):
+    class ValidationError(BaseKonfError):
         pass
 
-    class ReassignmentError(Exception):
+    class ReassignmentError(BaseKonfError):
         pass
 
-    class RedundantConfigError(Exception):
+    class RedundantConfigError(BaseKonfError):
         pass
 
     def __init__(self, config_path, parse_callback=None, *parse_callback_args, **parse_callback_kwargs):
@@ -66,6 +70,7 @@ class Konf(object):
                 raise self.FileExtensionError('Can`t load data from this file because it`s extension is wrong. '
                                               '\nYou can provide parse_callback if you want to get data from files '
                                               '\nwith non-standard extensions.')
+
         self._load_callback_args = parse_callback_args
         self._load_callback_kwargs = parse_callback_kwargs
 
@@ -77,6 +82,8 @@ class Konf(object):
                                  '\nDetails:\n{}'.format(self.path, e))
         try:
             data = self._load(file_entry, *self._load_callback_args, **self._load_callback_kwargs)
+            if data is None:
+                data = dict()
         except Exception as e:
             raise self.ParseError('Can`t load data from the configuration file "{}"'
                                   '\nDetails:\n{}'.format(self.path, e))
@@ -154,5 +161,5 @@ class Konf(object):
             ret = self.data[name]
         except KeyError:
             raise self.IncompleteConfigError('Param {} not found in the configuration file "{}"'.
-                                        format(name, self.path))
+                                             format(name, self.path))
         return ret

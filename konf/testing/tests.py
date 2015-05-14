@@ -114,3 +114,14 @@ class KonfigTestCase(TestCase):
         self.assertEquals([left_foot, right_foot, tail], [0, 1, 9])
 
         self.assertRaises(k_.ReassignmentError, lambda: k_('tail', int, 10))
+
+    def test_no_content(self):
+        for module in ['3.yml', '4.yml']:
+            k_ = Konf(self._get_asset(module))
+            self.assertRaises(Konf.IncompleteConfigError, lambda: k_('i_am_not_in_file', int))
+
+    def test_no_content_default(self):
+        for module in ['3.yml', '4.yml']:
+            k_ = Konf(self._get_asset(module))
+            a = k_('i_am_not_in_file_but_with_default', int, 3)
+            self.assertEqual(a, 3)

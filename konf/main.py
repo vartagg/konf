@@ -128,13 +128,15 @@ class Konf(object):
 
         return value
 
-    def check_involved(self):
+    def check_redundant(self):
         data_set = set(self.data)
         collected_data_set = set(self.collected_data)
         diff = data_set - collected_data_set
         if diff:
             raise self.RedundantConfigError('There are unused variables in the config file "{}":'
                                             '\n{}'.format(self._config, ', '.join(map(lambda x: str(x), diff))))
+
+    check_involved = check_redundant  # Check involved is deprecated and now does the same like check_redundant
 
     @property
     def path(self):

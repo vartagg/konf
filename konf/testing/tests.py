@@ -33,7 +33,7 @@ class KonfigTestCase(TestCase):
 
         coold_dict = k_('cool_dict', {'khrum': STRING, 'dfght': int})
         self.assertEqual(coold_dict, {
-            'khrum': 'bar',
+            'khrum': u'бар',
             'dfght': 90
         })
 
@@ -95,6 +95,18 @@ class KonfigTestCase(TestCase):
     def test_involved(self):
         k_ = Konf(self._get_asset('2.yml'))
         checker = k_.check_involved
+
+        right_foot = k_('right_foot', int)
+        self.assertEqual(right_foot, 1)
+        self.assertRaises(Konf.RedundantConfigError, checker)
+
+        left_foot = k_('left_foot', int)
+        checker()
+        self.assertEqual(left_foot, 0)
+
+    def test_redundant(self):
+        k_ = Konf(self._get_asset('2.yml'))
+        checker = k_.check_redundant
 
         right_foot = k_('right_foot', int)
         self.assertEqual(right_foot, 1)

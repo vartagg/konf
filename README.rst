@@ -1,8 +1,8 @@
 Konf
 ====
 
-Designed to simplify the use of variables in configuration files.
-Import variables to Python must be easy and reliable!
+Killer-library that once and for all solve the problem of Python configuration files outside of VCS.
+
 
 Installation:
 
@@ -17,19 +17,31 @@ Running tests:
     nosetests
 
 
+Why Konf?
+=========
+
+Sometimes there is a need to get some settings out from the Python code, and then to use them in an application. It can be secret keys, authentication tokens, URLs of third-party services, or other params which may be different on other servers. A developer (or IT engineer) is faced with several challenges:
+
+
+-  Validation of data importing from config. He may need for simple typing, range of values or matching with regexes.
+-  Data integrity. He must be sure that all the complex data structures (lists or dicts for example) represents the required schemas. Also, it can be useful to check whether there are no extra (redundant) things inside a config (because it can be a data forgotten to map inside an application).
+-  Correct exceptions when something goes wrong. This allows immediately understand (just having looked at logs) of what the problem is. Useful when deploying servers.
+
+
 Features:
+=========
 
--  Easy to use
--  JSON and YAML support out of the box
--  Require typing or validation of all input data for human factor prevention
+-  Readability and user-friendly for humans (Yes, IT specialists are also, in part, humans)
+-  JSON and YAML support out of the box (In fact, additional libraries will be automatically installed for support it ^_^ )
+-  Typing of validation of all importing data. And this will be **required** for human factor prevention
 -  Python 2.7, 3+ compatible
--  Unit-tested
--  Custom format of configuration files can be used
+-  100% code coverage
+-  Custom format of configuration files can be used. If I missed and at now anyone uses something else except of JSON and YAML, you can create an `issue <https://github.com/vartagg/konf/issues>`__ about it, and probably the new format will be supported in next versions.
 
-For Python data structures validation can be used one of these excellent libs:
+For Python data structures validation is used one of these excellent libs:
 
--  `alecthomas/voluptuous <https://github.com/alecthomas/voluptuous>`__
--  `kolypto/py-good <https://github.com/kolypto/py-good>`__ (by default)
+-  `kolypto/py-good <https://github.com/kolypto/py-good>`__ (by default, because more functionality)
+-  `alecthomas/voluptuous <https://github.com/alecthomas/voluptuous>`__ (fundamental library on which *good* based, optional)
 
 For YAML parsing is used a great lib of Kirill Simonov
 `PyYAML <http://pyyaml.org/wiki/PyYAML>`__
@@ -44,32 +56,76 @@ Just look at the code.
 
     from konf import Konf
 
-    # Filling of variables from config file fruits.yml in k_ object
-    k_ = Konf('fruits.yml')
+    # Filling of variables from config file tokens.yaml in k_ object
+    k_ = Konf('tokens.yaml')
 
-    # Getting variables from k_. 1st arg is a name of variable (specified in config),
-    # 2nd can be a type or validator
-    APPLE = k_('APPLE', basestring)
-    ORANGE = k_('ORANGE', basestring)
+    # Getting variables from k_: first argument is a name of variable (specified in the config),
+    # second can be a type or validator
+    SECRET_KEY = k_('secret_key', basestring)
+    AUTH_TOKEN = k_('auth_token', basestring)
 
-    # In the next example is using validator: list, that must contain only objects with
-    # basestring type (str or unicode)
-    BASKET_OF_MANDARINS = k_('BASKET', [basestring])
+    # In the next example is used a validator: list, that must contain
+    # only objects with basestring type (str or unicode)
+    CLIENTS = k_('clients', [basestring])
 
     # And dict with two required keys with appropriate types
-    NAMED_BANANAS = k_('BANANAS', {'yellow': basestring, 'banana2': basestring})
+    DELAYS = k_('delays', {'case1': int, 'case2': int})
 
-    # Other example with grades.json file
-    k2_ = Konf('grades.json')
 
-    DAVID_GRADE = k2_('DAVID', int)
-    MARIA_GRADE = k2_('MARIA', int)
 
 You can find more details and advanced examples about natural validation on
-`voluptuous <https://pypi.python.org/pypi/voluptuous>`__
-or
 `good <https://pypi.python.org/pypi/good>`__
+or
+`voluptuous <https://pypi.python.org/pypi/voluptuous>`__
 pages.
+
+
+Ok, what happened next? Let us assume tokens.yaml is missing. In case of this, after the script execution, we can see next exception message:
+
+.. code:: pytb
+
+    konf.main.ReadError: Can`t access to the configuration file "tokens.yaml"
+
+
+Let's create a file tokens.yaml and input next:
+
+.. code:: yaml
+
+    ---
+      secret_key: FOO
+      auth_token: BAR
+      clients: Q,
+      delays:
+        case1: 15
+        case2: 17
+
+
+Exception is raised:
+
+.. code:: pytb
+
+    Traceback (most recent call last):
+      File "/Users/me/python/examples/example.py", line 19, in <module>
+        CLIENTS = k_('clients', [basestring])
+      File "/Users/me/python/examples/konf/konf/main.py", line 126, in __call__
+        raise self.ValidationError(e)
+    konf.main.ValidationError: expected a list
+
+
+Then fix this mistake:
+
+.. code:: yaml
+
+    ---
+      secret_key: FOO
+      auth_token: BAR
+      clients: [Q]
+      delays:
+        case1: 15
+        case2: 17
+
+
+Now all be OK, because ``[Q]`` represents a list of values, not a string. **Note**: you can see the list of all supported exceptions in the end of this documentation page. 
 
 
 Default values
@@ -95,56 +151,63 @@ Do you need to use a value if any variable is not contained in a config file? Yo
     SHIFT_TIME = k_('SHIFT', int, complex(42, 42))
 
 
-Checking not involved variables
-===============================
+Checking redundant variables
+============================
 
-Sometimes you want to be sure that all of the variables in a config file are involved and you haven't forgotten anything.
-In this situation the ``check_involved()`` method can be helpful.
+Sometimes you want to be sure that all of the variables in a config file are used and you haven't forgotten anything.
+In this situation the ``check_redundant()`` method can be helpful.
 
 .. code:: python
 
     from konf import Konf
 
-    k_ = Konf('required.yml')
+    k_ = Konf('bar.yaml')
 
-    IMPORTANT_1 = k_('IMPORTANT_1', int)
+    FOO1 = k_('foo1', int)
 
-    IMPORTANT_2 = k_('IMPORTANT_2', int)
+    FOO2 = k_('foo2', int)
 
-    # If config file contains anything except IMPORTANT_1 and IMPORTANT_2,
+    # If config file contains anything except foo1 and foo2,
     # RedundantConfigError will be raised after call of this method!
-    k_.check_involved()
+    k_.check_redundant()  # Fail
 
-Default values and ``check_involved()`` also working fine together.
+
+Default values and ``check_redundant()`` also working fine together.
 
 .. code:: python
 
     from konf import Konf
 
-    k_ = Konf('foo.yml')
+    k_ = Konf('foo.yaml')
 
     X = k_('X', int, 0)
 
     Y = k_('Y', int, 0)
 
-    # If X and Y doesn't contained in the config file, RedundantConfigError will not be raised,
-    # just X == 0 and Y == 0
-    k_.check_involved()
+    # If X and Y doesn't contained in the config file, RedundantConfigError will not be raised
+    # after next line of code, because they have default values. 
+    # So, it's just like X == 0 and Y == 0
+    k_.check_redundant()  # Success
 
 
-List of supporting Exceptions
-=============================
+List of supported Exceptions
+============================
 
-:ValidationError: Raises when data from config file doesn't match to the ``type_or_validator`` arg
 
-:IncompleteConfigError: Raises after trying to get variable that not contained in a config file
+=====================  ====================================================================================
+     Exception                                     Raises when...
+=====================  ====================================================================================
+ValidationError        Data from config file doesn't match to the ``type_or_validator`` arg
 
-:ReadError: Raises when config file can't be read
+IncompleteConfigError  Trying to get variable that not contained in a config file
 
-:ParseError: Raises if third-party parser can't parse configuration file
+ReadError              Config file can't be read
 
-:ReassignmentError: Raises if variable loaded not for the first time
+ParseError             Third-party parser can't parse configuration file
 
-:FileExtensionError: Raises if extension of the config is not .yml or .json, and ``parse_callback`` arg is not specified
+ReassignmentError      Variable is loaded not for the first time
 
-:RedundantConfigError: Raises after ``check_involved()`` call if any of variables in config file is not involved in the program
+FileExtensionError     Extension of the config isn't supported, and ``parse_callback`` arg isn't specified
+
+RedundantConfigError   Call of ``check_redundant()`` if any of variables in a config isn't used in app
+=====================  ====================================================================================

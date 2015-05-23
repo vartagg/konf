@@ -5,3 +5,4 @@ dist
 *.EGG
 *.EGG-INFO
 *.pyc
+konf/examples

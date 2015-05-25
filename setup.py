@@ -28,9 +28,7 @@ def package_installed(pkg):
 
 install_requires=['PyYAML']
 
-if package_installed('good'):
-    install_requires.append('good')
-elif package_installed('voluptuous'):
+if package_installed('voluptuous'):
     install_requires.append('voluptuous')
 else:
     install_requires.append('good')

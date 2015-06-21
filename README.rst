@@ -1,7 +1,7 @@
 Konf
 ====
 
-Killer-library that once and for all solve the problem of Python configuration files outside of VCS.
+Tiny tool that designed to solve problems of Python configuration files located outside of VCS.
 
 
 Installation:
@@ -20,28 +20,27 @@ Running tests:
 Why Konf?
 =========
 
-Sometimes there is a need to get some settings out from the Python code, and then to use them in an application. It can be secret keys, authentication tokens, URLs of third-party services, or other params which may be different on other servers. A developer (or IT engineer) is faced with several challenges:
+Sometimes there is a need to get some settings outside of Python code and then to use them in an application. This can be secret keys, authentication tokens, URLs of third-party services, or other settings which depends on the server. Developers (or IT engineers) are faced with several challenges:
 
 
--  Validation of data importing from config. He may need for simple typing, range of values or matching with regexes.
--  Data integrity. He must be sure that all the complex data structures (lists or dicts for example) represents the required schemas. Also, it can be useful to check whether there are no extra (redundant) things inside a config (because it can be a data forgotten to map inside an application).
--  Correct exceptions when something goes wrong. This allows immediately understand (just having looked at logs) of what the problem is. Useful when deploying servers.
+-  Validation of data importing from config. It may be simple typing, matching with range of possible values or with regexes.
+-  Respect of all settings. Check that config contains all required data. Also, it can be useful to check that there are no extra (redundant) things inside a config (because it can be the data, forgotten to consider in an application).
+-  Understanding what happens when something goes wrong. Correct representational exceptions allows immediately understand (just having looked at logs) what the problem is. Useful when deploying servers.
 
 
 Features:
 =========
 
--  Readability and user-friendly for humans (Yes, IT specialists are also, in part, humans)
--  JSON and YAML support out of the box (In fact, additional libraries will be automatically installed for support it ^_^ )
--  Typing of validation of all importing data. And this will be **required** for human factor prevention
+-  Allows to DRY import variables
+-  Readability for humans
+-  JSON and YAML support out of the box (In fact, additional libraries will be automatically installed for support it)
+-  Typing or validation of all importing data. And this is **required** because human factor prevention
 -  Python 2.7, 3+ compatible
 -  100% code coverage
--  Custom format of configuration files can be used. If I missed and at now anyone uses something else except of JSON and YAML, you can create an `issue <https://github.com/vartagg/konf/issues>`__ about it, and probably the new format will be supported in next versions.
+-  Custom format of configuration files can be used. If I missed and at now anyone uses something else except of supported formats, you can create an `issue <https://github.com/vartagg/konf/issues>`__ about it, and probably the new format will be supported in next versions.
 
-For Python data structures validation is used one of these excellent libs:
-
--  `kolypto/py-good <https://github.com/kolypto/py-good>`__ (by default, because more functionality)
--  `alecthomas/voluptuous <https://github.com/alecthomas/voluptuous>`__ (fundamental library on which *good* based, optional)
+For Python data structures validation is used excellent library
+`kolypto/py-good <https://github.com/kolypto/py-good>`__
 
 For YAML parsing is used a great lib of Kirill Simonov
 `PyYAML <http://pyyaml.org/wiki/PyYAML>`__
@@ -75,12 +74,10 @@ Just look at the code.
 
 You can find more details and advanced examples about natural validation on
 `good <https://pypi.python.org/pypi/good>`__
-or
-`voluptuous <https://pypi.python.org/pypi/voluptuous>`__
-pages.
+page
 
 
-Ok, what happened next? Let us assume tokens.yaml is missing. In case of this, after the script execution, we can see next exception message:
+Ok, what happened next? Imagine that tokens.yaml is missing. In case of this, after the script execution, we can see next exception message:
 
 .. code:: pytb
 

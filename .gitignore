@@ -6,3 +6,4 @@ dist
 *.EGG-INFO
 *.pyc
 konf/examples
+build

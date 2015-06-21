@@ -1,8 +1,7 @@
 import os
 from setuptools import setup, find_packages
-import pkg_resources
 
-version = "1.1.4"
+version = "1.1.5"
 
 description = (
     'Konf is a Python package which designed to simplify the use of variables in configuration files. '
@@ -15,23 +14,8 @@ def read(fname):
 
 long_description = read('README.rst')
 
+install_requires=['PyYAML', 'good']
 
-def package_installed(pkg):
-    """Check if package is installed"""
-    req = pkg_resources.Requirement.parse(pkg)
-    try:
-        pkg_resources.get_provider(req)
-    except pkg_resources.DistributionNotFound:
-        return False
-    else:
-        return True
-
-install_requires=['PyYAML']
-
-if package_installed('voluptuous'):
-    install_requires.append('voluptuous')
-else:
-    install_requires.append('good')
 
 setup(
     name='konf',

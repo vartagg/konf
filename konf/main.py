@@ -5,10 +5,7 @@ import os
 
 __author__ = 'vartagg'
 
-try:
-    from good import Schema, Invalid
-except ImportError:
-    from voluptuous import Schema, Invalid
+from good import Schema, Invalid
 
 
 MAPPING = {
@@ -151,8 +148,6 @@ class Konf(object):
         if diff:
             raise self.RedundantConfigError('There are unused variables in the config file "{}":'
                                             '\n{}'.format(self._config, ', '.join(map(lambda x: str(x), diff))))
-
-    check_involved = check_redundant  # Check involved is deprecated and now does the same like check_redundant
 
     @property
     def path(self):

@@ -189,27 +189,100 @@ Default values and ``check_redundant()`` also working fine together.
     k_.check_redundant()  # Success
 
 
+More complex example
+====================
+
+Write the content to a social_auth.yml in a readable form:
+
+.. code:: yaml
+
+   ---
+     SN:
+       vk:
+         key: '123'
+         secret: qwerty
+       google:
+         key: '456'
+         secret: uiop
+       twitter:
+         key: '789'
+         secret: zxc
+       ok:
+         key: '000'
+         secret: vbn
+         public_name: m
+
+Step-by-step process it in settings.py
+
+.. code:: python
+
+   # 0. Select configuration file
+   k_ = Konf('social_auth.yml')
+
+   # 1. Declare validators
+   # You can cache validators inside a Konf object as if it's a standard python dict
+   k_['v1'] = {
+      'key': basestring,
+      'secret': basestring,
+   }
+   k_['v2'] = {
+      'key': basestring,
+      'secret': basestring,
+      'public_name': basestring
+   }
+
+   # 2. Get variables from config
+   # For avoid copy-paste and massive chunks of code, just declare a new variable
+   # and pass data from config to it
+   sn = k_('SN', {
+      'vk': k_['v1'],  # You can choose validator you want, for example v1...
+      'google': k_['v1'],
+      'twitter': k_['v1'],
+      'ok': k_['v2']  # ...or v2
+   })
+
+   # 3. Fill everything to a python variables which are required for 3rd-party library
+   SOCIAL_AUTH_VK_OAUTH2_KEY = sn['vk']['key']
+   SOCIAL_AUTH_VK_OAUTH2_SECRET = sn['vk']['secret']
+   SOCIAL_AUTH_GOOGLE_OAUTH2_KEY = sn['google']['key']
+   SOCIAL_AUTH_GOOGLE_OAUTH2_SECRET = sn['google']['secret']
+   SOCIAL_AUTH_TWITTER_KEY = sn['twitter']['key']
+   SOCIAL_AUTH_TWITTER_SECRET = sn['twitter']['secret']
+   SOCIAL_AUTH_ODNOKLASSNIKI_KEY = sn['ok']['key']
+   SOCIAL_AUTH_ODNOKLASSNIKI_SECRET = sn['ok']['secret']
+   SOCIAL_AUTH_ODNOKLASSNIKI_OAUTH2_PUBLIC_NAME = sn['ok']['public_name']
+
+   # 4. Check that config doesn't contain some garbage
+   # (this might mean you forgot to get these variables, or this config is wrong, some draft for example)
+   k_.check_redundant()
+
+   # 5. If server is running without errors, and you will meet issue with this 3rd-party library later,
+   # you can be sure that problem isn't in your configuration file.
+   # Otherwise, you'll just catch a error on a start server stage.
+
 List of supported Exceptions
 ============================
 
 
-=====================  ====================================================================================
+========================     ===================================================================================
      Exception                                     Raises when...
-=====================  ====================================================================================
-ValidationError        Data from config file doesn't match to the ``type_or_validator`` arg
+========================     ===================================================================================
+ValidationError              Data from config file doesn't match to the ``type_or_validator`` arg
 
-IncompleteConfigError  Trying to get variable that not contained in a config file
+IncompleteConfigError        Trying to get variable that not contained in a config file
 
-ReadError              Config file can't be read
+ReadError                    Config file can't be read
 
-ParseError             Third-party parser can't parse configuration file
+ParseError                   Third-party parser can't parse configuration file
 
-ReassignmentError      Variable is loaded not for the first time
+ReassignmentError            Variable is loaded not for the first time
 
-FileExtensionError     Extension of the config isn't supported, and ``parse_callback`` arg isn't specified
+FileExtensionError           Extension of the config isn't supported, and ``parse_callback`` arg isn't specified
 
-RedundantConfigError   Call of ``check_redundant()`` if any of variables in a config isn't used in app
-=====================  ====================================================================================
+RedundantConfigError         Call of ``check_redundant()`` if any of variables in a config isn't used in app
+
+ValidatorManagementError     Incorrect usage of validators
+========================     ===================================================================================
 
 .. |Build Status| image:: https://travis-ci.org/vartagg/konf.svg?branch=master
    :target: https://travis-ci.org/vartagg/konf

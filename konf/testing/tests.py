@@ -94,7 +94,7 @@ class KonfigTestCase(TestCase):
 
     def test_involved(self):
         k_ = Konf(self._get_asset('2.yml'))
-        checker = k_.check_involved
+        checker = k_.check_redundant
 
         right_foot = k_('right_foot', int)
         self.assertEqual(right_foot, 1)
@@ -118,7 +118,7 @@ class KonfigTestCase(TestCase):
 
     def test_involved_with_default(self):
         k_ = Konf(self._get_asset('2.yml'))
-        checker = k_.check_involved
+        checker = k_.check_redundant
         right_foot = k_('right_foot', int)
         left_foot = k_('left_foot', int)
         tail = k_('tail', int, 9)
@@ -174,6 +174,14 @@ class KonfigTestCase(TestCase):
         SOCIAL_AUTH_ODNOKLASSNIKI_KEY = sn_['ok']['key']
         SOCIAL_AUTH_ODNOKLASSNIKI_SECRET = sn_['ok']['secret']
         SOCIAL_AUTH_ODNOKLASSNIKI_OAUTH2_PUBLIC_NAME = sn_['ok']['public_name']
+
+        # 4. Check that config doesn't contain some garbage
+        # (this might mean you forgot to get these variables, or this config is wrong, some draft for example)
+        k_.check_redundant()
+
+        # 5. If server is running without errors, and you will meet issue with this 3rd-party library later,
+        # you can be sure that problem isn't in your configuration file.
+        # Otherwise, you'll just catch a error on a start server stage.
 
         from good import Optional
         k2_ = Konf(self._get_asset('6.yml'))

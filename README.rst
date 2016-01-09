@@ -1,3 +1,5 @@
+|Build Status|
+
 Konf
 ====
 
@@ -208,3 +210,6 @@ FileExtensionError     Extension of the config isn't supported, and ``parse_call
 
 RedundantConfigError   Call of ``check_redundant()`` if any of variables in a config isn't used in app
 =====================  ====================================================================================
+
+.. |Build Status| image:: https://travis-ci.org/vartagg/konf.svg?branch=master
+   :target: https://travis-ci.org/vartagg/konf

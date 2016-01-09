@@ -1,0 +1,11 @@
+---
+  SN:
+    vk:
+      key: '123'
+      secret: qwerty
+    google:
+      kwy: '124'
+      secret: uiop
+    twitter:
+      key: '235'
+      secret: zxc

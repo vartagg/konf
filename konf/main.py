@@ -48,6 +48,9 @@ class Konf(object):
     class RedundantConfigError(BaseKonfError):
         pass
 
+    class ValidatorManagementError(BaseKonfError):
+        pass
+
     def __init__(self, config_path, parse_callback=None, *parse_callback_args, **parse_callback_kwargs):
         """
         File extension detection, reading content from file, parsing and encapsulation data inside Konf object.
@@ -89,6 +92,7 @@ class Konf(object):
                                   '\nDetails:\n{}'.format(self.path, e))
         self._data = data
         self._collected_data = []
+        self._validators = dict()
 
     def __call__(self, name, type_or_validator, default=Unspecified):
         """
@@ -127,6 +131,18 @@ class Konf(object):
         self._collected_data.append(name)
 
         return value
+
+    def __setitem__(self, key, value):
+        if key in self._validators:
+            raise self.ValidatorManagementError('Validator cannot be reassigned')
+        if not isinstance(value, Schema):
+            value = Schema(value)
+        self._validators[key] = Schema(value)
+
+    def __getitem__(self, item):
+        if not item in self._validators:
+            raise self.ValidatorManagementError('Validator with this name is not found')
+        return self._validators[item]
 
     def check_redundant(self):
         data_set = set(self.data)

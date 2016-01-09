@@ -1,0 +1,15 @@
+---
+  SN:
+    vk:
+      key: '123'
+      secret: qwerty
+    google:
+      key: '456'
+      secret: uiop
+    twitter:
+      key: '789'
+      secret: zxc
+    ok:
+      key: '000'
+      secret: vbn
+      public_name: m

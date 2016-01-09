@@ -137,3 +137,58 @@ class KonfigTestCase(TestCase):
             k_ = Konf(self._get_asset(module))
             a = k_('i_am_not_in_file_but_with_default', int, 3)
             self.assertEqual(a, 3)
+
+    def test_validators(self):
+        # 0. Select configuration file
+        k_ = Konf(self._get_asset('5.yml'))
+
+        # 1. Declare validators
+        # You can cache validators inside a Konf object as if it's a standard python dict
+        k_['v1'] = {
+            'key': STRING,
+            'secret': STRING,
+        }
+        k_['v2'] = {
+            'key': STRING,
+            'secret': STRING,
+            'public_name': STRING
+        }
+
+        # 2. Get variables from config
+        # For avoid copy-paste and massive chunks of code, just declare a new variable
+        # and pass data from config to it
+        sn_ = k_('SN', {
+            'vk': k_['v1'],  # You can get validator you want, for example v1...
+            'google': k_['v1'],
+            'twitter': k_['v1'],
+            'ok': k_['v2']  # ...or v2
+        })
+
+        # 3. Fill everything to a python variables which are required for 3rd-party library
+        SOCIAL_AUTH_VK_OAUTH2_KEY = sn_['vk']['key']
+        SOCIAL_AUTH_VK_OAUTH2_SECRET = sn_['vk']['secret']
+        SOCIAL_AUTH_GOOGLE_OAUTH2_KEY = sn_['google']['key']
+        SOCIAL_AUTH_GOOGLE_OAUTH2_SECRET = sn_['google']['secret']
+        SOCIAL_AUTH_TWITTER_KEY = sn_['twitter']['key']
+        SOCIAL_AUTH_TWITTER_SECRET = sn_['twitter']['secret']
+        SOCIAL_AUTH_ODNOKLASSNIKI_KEY = sn_['ok']['key']
+        SOCIAL_AUTH_ODNOKLASSNIKI_SECRET = sn_['ok']['secret']
+        SOCIAL_AUTH_ODNOKLASSNIKI_OAUTH2_PUBLIC_NAME = sn_['ok']['public_name']
+
+        from good import Optional
+        k2_ = Konf(self._get_asset('6.yml'))
+        k2_['sn_data'] = {
+            'key': STRING,
+            'secret': STRING,
+            Optional('public_name'): STRING
+        }
+        sn2_ = lambda: k2_('SN', {
+            name: k2_['sn_data'] for name in ['vk', 'google', 'twitter']
+        })
+        self.assertRaises(Konf.ValidationError, sn2_)
+
+        def assign():
+            k_['v1'] = {'foo': 'bar'}
+
+        self.assertRaises(Konf.ValidatorManagementError, assign)
+        self.assertRaises(Konf.ValidatorManagementError, lambda: k_['v3'])

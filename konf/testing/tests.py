@@ -200,3 +200,13 @@ class KonfigTestCase(TestCase):
 
         self.assertRaises(Konf.ValidatorManagementError, assign)
         self.assertRaises(Konf.ValidatorManagementError, lambda: k_['v3'])
+
+    def test_nested_default_value(self):
+        from good import Any, Default
+        k_ = Konf(self._get_asset('1.yml'))
+        cool_dict = k_('cool_dict', dict(
+            khrum=str,
+            dfght=int,
+            foo=Any(str, Default('bar'))
+        ))
+        self.assertEqual(cool_dict['foo'], 'bar')

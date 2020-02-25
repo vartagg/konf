@@ -1,16 +1,17 @@
 import os
 from setuptools import setup, find_packages
 
-version = "1.2"
+version = "1.3"
 
 description = (
     'Konf is a Python package which designed to simplify the use of variables in configuration files. '
-    'json and yaml supported out of the box. '
+    'YAML and JSON file formats support out of the box.'
 )
 
 
 def read(fname):
     return open(os.path.join(os.path.dirname(__file__), fname)).read()
+
 
 long_description = read('README.rst')
 
@@ -32,10 +33,10 @@ setup(
         'Intended Audience :: Developers',
         'Intended Audience :: System Administrators',
         'License :: OSI Approved :: BSD License',
-        'Programming Language :: Python :: 2.7',
-        'Programming Language :: Python :: 3.3',
-        'Programming Language :: Python :: 3.4',
-        'Programming Language :: Python :: 3.5'
+        'Programming Language :: Python :: 3.5',
+        'Programming Language :: Python :: 3.6',
+        'Programming Language :: Python :: 3.7',
+        'Programming Language :: Python :: 3.8'
     ],
     packages=find_packages(),
     package_data = {'': ['testing/assets/*.json', 'testing/assets/*.yml']},
